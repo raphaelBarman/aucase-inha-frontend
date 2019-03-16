@@ -1,0 +1,11 @@
+<html>
+    <head>
+        <title>{{ title }}</title>
+    </head>
+    <body>
+        <h1>Hello, {{ actor.first_name }} {{ actor.last_name }}</h1>
+        {% for parent_sections, object in objects %}
+        {% include '_object.html' %}
+        {% endfor %}
+    </body>
+</html>
