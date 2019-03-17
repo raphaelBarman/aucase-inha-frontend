@@ -1,9 +1,14 @@
-<div>
-    {% if parent_sections.1 %}
-    <h3>{{ parent_sections.1.text }}</h3>
-    {% endif %}
-    {% if parent_sections.0 %}
-    <h4>{{ parent_sections.0.text }}</h4>
-    {% endif %}
-    <div style="white-space: pre-wrap;">{{ object.text }}</div>
+<div class="card">
+
+    <div class="card-body">
+        {% if parent_sections %}
+        {% if parent_sections.1 %}
+        <h4 class="card-title">{{ parent_sections.1.text }}</h5>
+        {% endif %}
+        {% if parent_sections.0 %}
+        <h5 class="card-title">{{ parent_sections.0.text }}</h5>
+        {% endif %}
+        {% endif %}
+        <div class="card-text" style="white-space: pre-wrap;">{{ object.text }}</div>
+    </div>
 </div>

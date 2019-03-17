@@ -3,51 +3,26 @@ from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, Integer, Stri
 from sqlalchemy.orm import relationship
 from flask_sqlalchemy import SQLAlchemy
 from app import db
+import math
 from app.formatters import StrippedString
 from app.search import add_to_index, remove_from_index, query_index
+from sqlalchemy_fulltext import FullText
 
-class SearchableMixin(object):
-    @classmethod
-    def search(cls, expression, page, per_page):
-        ids, total = query_index(cls.__tablename__, expression, page, per_page)
-        if total == 0:
-            return cls.query.filter_by(id=0), 0
-        when = []
-        for i in range(len(ids)):
-            when.append((ids[i], i))
-        return cls.query.filter(cls.id.in_(ids)).order_by(
-            db.case(when, value=cls.id)), total
 
-    @classmethod
-    def before_commit(cls, session):
-        session._changes = {
-            'add': list(session.new),
-            'update': list(session.dirty),
-            'delete': list(session.deleted)
-        }
+def object2iiif(obj, scale=0.1):
+    if obj.iiif_url is None:
+        return ""
+    iiif_url = obj.iiif_url
+    xmin, ymin, xmax, ymax = eval(obj.bbox)
+    w = xmax-xmin
+    h = ymax-ymin
+    xmin = math.floor(xmin-w*scale)
+    ymin = math.floor(ymin-h*scale)
+    w = math.ceil(w+w*scale*2)
+    h = math.ceil(h+h*scale*2)
+    return "%s/%d,%d,%d,%d/full/0/default.jpg" % (iiif_url, xmin, ymin, w, h)
 
-    @classmethod
-    def after_commit(cls, session):
-        for obj in session._changes['add']:
-            if isinstance(obj, SearchableMixin):
-                add_to_index(obj.__tablename__, obj)
-        for obj in session._changes['update']:
-            if isinstance(obj, SearchableMixin):
-                add_to_index(obj.__tablename__, obj)
-        for obj in session._changes['delete']:
-            if isinstance(obj, SearchableMixin):
-                remove_from_index(obj.__tablename__, obj)
-        session._changes = None
-
-    @classmethod
-    def reindex(cls):
-        for obj in cls.query:
-            add_to_index(cls.__tablename__, obj)
-
-db.event.listen(db.session, 'before_commit', SearchableMixin.before_commit)
-db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
-
-class Actor(SearchableMixin, db.Model):
+class Actor(db.Model):
     __tablename__ = 'actor'
     __searchable__ = ['first_name', 'last_name', 'role']
 
@@ -56,10 +31,15 @@ class Actor(SearchableMixin, db.Model):
     last_name = db.Column(db.String(45), nullable=False)
     role = db.Column(db.String(45))
 
-    sales = db.relationship('Sale', secondary='actor_sale', backref='actors')
+    sales = db.relationship('Sale', secondary='actor_sale', backref='actor_sales')
 
     def __repr__(self):
         return "<Actor (first_name='%s', last_name='%s', role='%s')"%(self.first_name, self.last_name, self.role)
+
+    def full_name(self):
+        return "%s%s" % (
+                self.first_name + " " if len(self.first_name) > 0 else "",
+                self.last_name)
 
 
 t_actor_sale = db.Table(
@@ -69,12 +49,12 @@ t_actor_sale = db.Table(
 )
 
 
-class Object(SearchableMixin, db.Model):
+class Object(FullText, db.Model):
     __tablename__ = 'object'
     __table_args__ = (
         db.Index('parent section object_idx', 'parent_section_sale', 'parent_section_page', 'parent_section_entity'),
     )
-    __searchable__ = ['text']
+    __fulltext_columns__ = ('text')
 
     id = db.Column(db.Integer, primary_key=True)
     sale_id = db.Column(db.ForeignKey('sale.id'), nullable=False, index=True)
@@ -116,8 +96,10 @@ class Sale(db.Model):
     cote_inha = db.Column(db.String(45), nullable=False)
     url_inha = db.Column(db.String(75), nullable=False)
 
+    actors = db.relationship('Actor', secondary='actor_sale', backref='sale_actors')
 
-class Section(SearchableMixin, db.Model):
+
+class Section(db.Model):
     __tablename__ = 'section'
     __table_args__ = (
         db.Index('parent section_idx', 'parent_section_page', 'parent_section_sale', 'parent_section_entity'),

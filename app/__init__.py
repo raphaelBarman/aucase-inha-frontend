@@ -10,7 +10,8 @@ def create_app(test_config=None):
     app.config.from_mapping(
         ELASTICSEARCH_URL= 'http://localhost:9200',
         SECRET_KEY = 'dev',
-        SQLALCHEMY_DATABASE_URI = 'mysql://test:1234@localhost/aucase?unix_socket=/run/mysqld/mysqld.sock',
+        SQLALCHEMY_DATABASE_URI = 'mysql://test:1234@localhost/aucase?unix_socket=/run/mysqld/mysqld.sock&charset=utf8',
+        JSON_AS_ASCII = False
     )
 
     if test_config is None:
@@ -25,7 +26,6 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
     db.init_app(app)
 
     app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \

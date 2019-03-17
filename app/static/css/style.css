@@ -1,0 +1,39 @@
+.sidebar {
+  /*! padding: 10px 0 0; */
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+  padding: 1.5 rem;
+}
+.sidebar-sticky {
+  position: -webkit-sicky;
+  position: sticky;
+  top: 0;
+  height: calc(100vh - 48px);
+  padding-top: 1rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.nav-item {
+  padding: .5rem 1rem;
+}
+
+.spinner-border, .spinner-grow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+.column-count-2 {
+  column-count: 2;
+}
+
+.dropdown-menu.show {
+  width: 100%;
+  min-width: 100% !important;
+  transform: None !important;
+  max-height: 500px !important;;
+}
+
+.form-control[disabled] {
+  height: 2rem !important;
+}
