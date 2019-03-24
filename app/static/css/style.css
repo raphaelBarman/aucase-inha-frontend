@@ -37,3 +37,20 @@
 .form-control[disabled] {
   height: 2rem !important;
 }
+
+.results-objects {
+  color: #969696;
+  font-size: 1.1875rem;
+  font-weight: 400;
+  text-align: right;
+}
+
+.spinner-image {
+  position: relative;
+  top: 0px;
+  left: 0px;
+}
+
+.object-url {
+  color: inherit;
+}

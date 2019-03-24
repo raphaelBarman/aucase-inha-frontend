@@ -1,4 +1,5 @@
-from flask import render_template, request, abort
+from flask import render_template, request, abort, Response, stream_with_context
+import requests
 from app.main import bp
 from flask import jsonify
 import dateutil.parser as date_parse
@@ -21,7 +22,8 @@ def w_search():
     section_query = request.json['sectionsearch']
     start_date = request.json['startdate']
     end_date = request.json['enddate']
-    page = request.args.get('page', 1, type=int)
+    sort_order = request.json['sortingorder']
+    page = request.json['page'] if 'page' in request.json else 1;
     objects = Object.query
     if len(object_query) > 0:
         if not object_query.startswith('"') or not object_query.endswith('"'):
@@ -53,11 +55,15 @@ def w_search():
             objects = objects.filter(Object.sale.has(Sale.date <= end_date))
         except:
             pass
+    results_count = objects.count()
+    if sort_order == 'date':
+        objects = objects.join(Object.sale).order_by(Sale.date)
     objects = objects.paginate(page, 20, False)
     parent_sections = [o.get_parent_sections() for o in objects.items]
     iiif_urls = [object2iiif(o) for o in objects.items]
     res = {}
-    res['html'] = render_template('object-results.html', objects=zip(parent_sections, iiif_urls, objects.items))
+    res['html'] = render_template('object-results.html', results_count=results_count, objects=zip(parent_sections, iiif_urls, objects.items))
+    res['results_count'] = results_count
     return jsonify(res)
 
 
@@ -73,3 +79,12 @@ def w_api():
              for a in actors])
 
     abort(404)
+
+@bp.route("/cors/<path:url>", methods=['GET'])
+def proxy_cors(url):
+    r = requests.get(url, stream=True, params=request.args)
+    response = Response(stream_with_context(r.iter_content()),
+                        content_type=r.headers['content-type'],
+                        status=r.status_code)
+    response.headers['Access-Control-Allow-Origin'] = "*"
+    return response

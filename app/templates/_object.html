@@ -1,9 +1,18 @@
+<a href="{{ object.inha_url }}{{ object.text }}" class="object-url">
 <div class="card">
-
+    <div class="card-header">
+        Vente du {{ object.sale.date.strftime("%d-%m-%Y") }}
+    </div>
+    <!-- 
+    <div class="object-image card-img-top d-flex justify-content-center" data-url-prefix="{{ iiif_url}}">
+        <div class="spinner-grow spinner-image m-3" role="status"><span class="sr-only">Loading...</span></div>
+    </div>
+    <img src="{{ iiif_url }}" class="card-img-top">
+    -->
     <div class="card-body">
         {% if parent_sections %}
         {% if parent_sections.1 %}
-        <h4 class="card-title">{{ parent_sections.1.text }}</h5>
+        <h4 class="card-title">{{ parent_sections.1.text }}</h4>
         {% endif %}
         {% if parent_sections.0 %}
         <h5 class="card-title">{{ parent_sections.0.text }}</h5>
@@ -12,3 +21,4 @@
         <div class="card-text" style="white-space: pre-wrap;">{{ object.text }}</div>
     </div>
 </div>
+</a>

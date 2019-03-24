@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from elasticsearch import Elasticsearch
+from app.dash.dashboard import add_dash
 db = SQLAlchemy()
 
 def create_app(test_config=None):
@@ -33,5 +34,11 @@ def create_app(test_config=None):
 
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)
+
+    #from app.dash import bp as dash_bp
+    #app.register_blueprint(dash_bp)
+
+    add_dash(app)
+
 
     return app

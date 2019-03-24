@@ -1,12 +1,9 @@
 <div>
-    <h1> object results</h1>
     <!-- <div class="row mb-4">-->
-    <div class="card-columns column-count-2">
         {% for parent_sections, iiif_url, object in objects %}
         <!-- <div class="col-xs-12 col-sm-12 col-lg-6">-->
-        <div>
+        <div class="row-8 mt-4">
             {% include '_object.html' %}
         </div>
         {% endfor %}
-    </div>
 </div>

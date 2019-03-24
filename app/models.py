@@ -11,7 +11,7 @@ from sqlalchemy_fulltext import FullText
 
 def object2iiif(obj, scale=0.1):
     if obj.iiif_url is None:
-        return ""
+        return None
     iiif_url = obj.iiif_url
     xmin, ymin, xmax, ymax = eval(obj.bbox)
     w = xmax-xmin
@@ -20,7 +20,7 @@ def object2iiif(obj, scale=0.1):
     ymin = math.floor(ymin-h*scale)
     w = math.ceil(w+w*scale*2)
     h = math.ceil(h+h*scale*2)
-    return "%s/%d,%d,%d,%d/full/0/default.jpg" % (iiif_url, xmin, ymin, w, h)
+    return "http://localhost:8080/%s/%d,%d,%d,%d/full/0/default.jpg" % (iiif_url, xmin, ymin, w, h)
 
 class Actor(db.Model):
     __tablename__ = 'actor'
@@ -34,7 +34,7 @@ class Actor(db.Model):
     sales = db.relationship('Sale', secondary='actor_sale', backref='actor_sales')
 
     def __repr__(self):
-        return "<Actor (first_name='%s', last_name='%s', role='%s')"%(self.first_name, self.last_name, self.role)
+        return "<Actor (first_name='%s', last_name='%s', role='%s')>"%(self.first_name, self.last_name, self.role)
 
     def full_name(self):
         return "%s%s" % (
@@ -42,11 +42,15 @@ class Actor(db.Model):
                 self.last_name)
 
 
-t_actor_sale = db.Table(
-    'actor_sale',
-    db.Column('actor_id', db.ForeignKey('actor.id', ondelete='CASCADE', onupdate='CASCADE'), primary_key=True, nullable=False),
-    db.Column('sale_id', db.ForeignKey('sale.id', ondelete='CASCADE', onupdate='CASCADE'), primary_key=True, nullable=False, index=True)
-)
+class Actor_Sale(db.Model):
+    __tablename__ = 'actor_sale'
+    actor_id = db.Column(db.ForeignKey('actor.id', ondelete='CASCADE', onupdate='CASCADE'), primary_key=True, nullable=False)
+    sale_id = db.Column(db.ForeignKey('sale.id', ondelete='CASCADE', onupdate='CASCADE'), primary_key=True, nullable=False, index=True)
+#t_actor_sale = db.Table(
+#    'actor_sale',
+#    db.Column('actor_id', db.ForeignKey('actor.id', ondelete='CASCADE', onupdate='CASCADE'), primary_key=True, nullable=False),
+#    db.Column('sale_id', db.ForeignKey('sale.id', ondelete='CASCADE', onupdate='CASCADE'), primary_key=True, nullable=False, index=True)
+#)
 
 
 class Object(FullText, db.Model):
@@ -82,7 +86,7 @@ class Object(FullText, db.Model):
         return sections
 
     def __repr__(self):
-        return "<Object (sale_id=%d, page=%f, entity=%d, text='%s')"%(self.sale_id, self.page, self.entity, self.text)
+        return "<Object (sale_id=%d, page=%f, entity=%d, text='%s')>"%(self.sale_id, self.page, self.entity, self.text)
 
     parent_section = db.relationship('Section', primaryjoin='Object.parent_section_id == Section.id', backref='objects')
     sale = db.relationship('Sale', primaryjoin='Object.sale_id == Sale.id', backref='objects')
@@ -97,6 +101,8 @@ class Sale(db.Model):
     url_inha = db.Column(db.String(75), nullable=False)
 
     actors = db.relationship('Actor', secondary='actor_sale', backref='sale_actors')
+    sale_sections = db.relationship('Section', primaryjoin='Section.sale_id == Sale.id', backref='sale_sections')
+    sale_objects = db.relationship('Object', primaryjoin='Object.sale_id == Sale.id', backref='sale_objects')
 
 
 class Section(db.Model):
@@ -129,7 +135,7 @@ class Section(db.Model):
                                     Section.entity==self.parent_section_entity).first()
 
     def __repr__(self):
-        return "<Section (sale_id=%d, page=%f, entity=%d, text='%s')"%(self.sale_id, self.page, self.entity, self.text)
+        return "<Section (sale_id=%d, page=%f, entity=%d, text='%s')>"%(self.sale_id, self.page, self.entity, self.text)
 
     parent_section = db.relationship('Section', remote_side=[id], primaryjoin='Section.parent_section_id == Section.id', backref='sections')
     sale = db.relationship('Sale', primaryjoin='Section.sale_id == Sale.id', backref='sections')

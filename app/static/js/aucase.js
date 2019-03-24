@@ -18,6 +18,18 @@ var AUCASE = {
         $('#sectionsearch').keyup(jQuery.throttle(400, function() {
             AUCASE.search(!0);
         }));
+        $('#resultspages-top,#resultspages-bottom').pagination({
+            items: 0,
+            itemsOnPage: 20,
+            displayedPages: 5,
+            edges:1,
+            prevText: "&laquo",
+            nextText: "&raquo",
+            listStyle: 'pagination',
+            onPageClick: function() {
+                AUCASE.search(!0);
+            }
+        });
         $.ajax({
             method: "POST",
             url: "/api?experts",
@@ -46,7 +58,6 @@ var AUCASE = {
                 $("#commissairesdropdown").prop("disabled", true);
             }
         }).done(function (data) {
-            console.log(mapActors(data));
             $('#commissairesdropdown').prop("disabled", false);
             $('#commissairesdropdown').html(
                 mapActors(data)
@@ -95,6 +106,9 @@ var AUCASE = {
         $('#datetimepicker2').datepicker().on('clearDate', function(e){
             $("#datetimepicker1").datepicker('setEndDate', '31/12/1945');
         });
+        $('#sortorder').on('change', function() {
+            AUCASE.search(!0);
+        });
 
         AUCASE.search(!0);
     },
@@ -108,14 +122,43 @@ var AUCASE = {
             contentType: 'application/json',
             dataType: 'json',
             beforeSend: function (e, t) {
-                $('#resultcontainer').html('<div class="spinner-grow" role="status"><span class="sr-only">Loading...</span></div>');
+                $('#results-spinner').css({"display": ""});
+                $('#no-results').css({"display": "none"});
+                $('#resultcontainer').html("");
+                $("#resultspages-top, #resultspages-bottom").css({"display": "none"});
             }
         }).done(function (data) {
+            $('#results-spinner').css({"display": "none"});
             $('#resultcontainer').html(data['html']);
+            var results_count = data['results_count'] ? data['results_count'] : 0;
+            $("#resultspages-top, #resultspages-bottom").pagination("updateItems", results_count);
+            if (results_count == 0) {
+                $('#resultsCount').html("");
+                $('#no-results').css({"display": ""});
+            } else {
+                $('#no-results').css({"display": "none"});
+                $("#resultspages-top, #resultspages-bottom").css({"display": ""});
+                if (results_count == 1){
+                    $('#resultsCount').html("1 objet trouvé");
+                } else {
+                    $('#resultsCount').html(results_count.toString() + " objets trouvés");
+                }
+            }
+            //AUCASE.loadImages();
         }).fail(function(e) {
             console.log("Error", e);
         })
     },
+    //loadImages: function() {
+    //    $(".object-image").each(function (){
+    //        var objectImage = $(this);
+    //        console.log(objectImage);
+    //        var width = Math.round(objectImage.width());
+    //        var url = objectImage.data('url-prefix');
+    //        url = url + '/' + width + ',/0/default.jpg';
+    //        objectImage.replaceWith('<img src="' + url + '" class="card-img-top">');
+    //    });
+    //},
     initRequestParams: function() {
         return AUCASE.params = {
             experts: $("#expertsdropdown").val(),
@@ -124,6 +167,8 @@ var AUCASE = {
             enddate: $("#datetimepicker2").datepicker('getDate'),
             objectsearch: $('input#objectsearch').val(),
             sectionsearch: $('input#sectionsearch').val(),
+            sortingorder: $('#sortorder').val(),
+            page: $("#resultspages-top").pagination('getCurrentPage'),
         },
         AUCASE.params
     }
