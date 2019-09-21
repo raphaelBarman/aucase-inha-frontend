@@ -1,13 +1,6 @@
 # coding: utf-8
-from sqlalchemy import Column, DateTime, Float, ForeignKey, Index, Integer, String, Table
-from sqlalchemy.orm import relationship
-from flask_sqlalchemy import SQLAlchemy
 from app import db
 import math
-from app.formatters import StrippedString
-from app.search import add_to_index, remove_from_index, query_index
-from sqlalchemy_fulltext import FullText
-
 
 def object2iiif(obj, scale=0.1):
     if obj.iiif_url is None:
@@ -20,11 +13,10 @@ def object2iiif(obj, scale=0.1):
     ymin = math.floor(ymin-h*scale)
     w = math.ceil(w+w*scale*2)
     h = math.ceil(h+h*scale*2)
-    return "http://localhost:8080/%s/%d,%d,%d,%d/full/0/default.jpg" % (iiif_url, xmin, ymin, w, h)
+    return "http://localhost:8080/cors/%s/%d,%d,%d,%d/full/0/default.jpg" % (iiif_url, xmin, ymin, w, h)
 
 class Actor(db.Model):
     __tablename__ = 'actor'
-    __searchable__ = ['first_name', 'last_name', 'role']
 
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(65))
@@ -46,19 +38,13 @@ class Actor_Sale(db.Model):
     __tablename__ = 'actor_sale'
     actor_id = db.Column(db.ForeignKey('actor.id', ondelete='CASCADE', onupdate='CASCADE'), primary_key=True, nullable=False)
     sale_id = db.Column(db.ForeignKey('sale.id', ondelete='CASCADE', onupdate='CASCADE'), primary_key=True, nullable=False, index=True)
-#t_actor_sale = db.Table(
-#    'actor_sale',
-#    db.Column('actor_id', db.ForeignKey('actor.id', ondelete='CASCADE', onupdate='CASCADE'), primary_key=True, nullable=False),
-#    db.Column('sale_id', db.ForeignKey('sale.id', ondelete='CASCADE', onupdate='CASCADE'), primary_key=True, nullable=False, index=True)
-#)
 
 
-class Object(FullText, db.Model):
+class Object(db.Model):
     __tablename__ = 'object'
     __table_args__ = (
         db.Index('parent section object_idx', 'parent_section_sale', 'parent_section_page', 'parent_section_entity'),
     )
-    __fulltext_columns__ = ('text')
 
     id = db.Column(db.Integer, primary_key=True)
     sale_id = db.Column(db.ForeignKey('sale.id'), nullable=False, index=True)
@@ -111,7 +97,6 @@ class Section(db.Model):
         db.Index('parent section_idx', 'parent_section_page', 'parent_section_sale', 'parent_section_entity'),
         db.Index('parent_section', 'parent_section_sale', 'parent_section_page', 'parent_section_entity')
     )
-    __searchable__ = ['text']
 
     id = db.Column(db.Integer, primary_key=True)
     sale_id = db.Column(db.ForeignKey('sale.id'), nullable=False, index=True)

@@ -309,7 +309,7 @@
 				if (o.useAnchors) {
 					$link = $('<a href="' + o.hrefTextPrefix + (pageIndex + 1) + o.hrefTextSuffix + '" class="page-link">' + (options.text) + '</a>');
 				} else {
-					$link = $('<span >' + (options.text) + '</span>');
+					$link = $('<span class="page-link">' + (options.text) + '</span>');
 				}
 				$link.click(function(event){
 					return methods._selectPage.call(self, pageIndex, event);

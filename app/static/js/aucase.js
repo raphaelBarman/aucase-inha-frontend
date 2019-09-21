@@ -1,9 +1,10 @@
 function mapActors(actors) {
     var res = "";
     actors.forEach(function (actor){
-        var first_name = actor[0];
-        var last_name = actor[1];
-        res += '<option value="'+ first_name+ '/'+ last_name +'">' + (first_name === "" ? "" : first_name + " ") + last_name + "</option>\n";
+        var id_ = actor['id'];
+        var first_name = actor['first_name'];
+        var last_name = actor['last_name'];
+        res += '<option value="'+ id_ + '">' + (first_name === "" ? "" : first_name + " ") + last_name + "</option>\n";
     });
     return res;
 }
@@ -15,14 +16,19 @@ var AUCASE = {
         $('#objectsearch').keyup(jQuery.throttle(400, function() {
             AUCASE.search(!0);
         }));
-        $('#sectionsearch').keyup(jQuery.throttle(400, function() {
+        $('#sectioncategorysearch').keyup(jQuery.throttle(400, function() {
             AUCASE.search(!0);
         }));
+        $('#sectionauthorsearch').keyup(jQuery.throttle(400, function() {
+            AUCASE.search(!0);
+        }));
+
         $('#resultspages-top,#resultspages-bottom').pagination({
             items: 0,
             itemsOnPage: 20,
             displayedPages: 5,
             edges:1,
+            useAnchors: false,
             prevText: "&laquo",
             nextText: "&raquo",
             listStyle: 'pagination',
@@ -115,9 +121,10 @@ var AUCASE = {
     search: function(e) {
         e && AUCASE.initRequestParams(),
         AUCASE.searchXhR && 4 != AUCASE.searchXhR.readystate && AUCASE.searchXhR.abort(),
+        console.log(AUCASE.params);
         AUCASE.searchXhR = $.ajax({
             method: "POST",
-            url: '/search',
+            url: '/api?search',
             data: JSON.stringify(AUCASE.params),
             contentType: 'application/json',
             dataType: 'json',
@@ -144,33 +151,22 @@ var AUCASE = {
                     $('#resultsCount').html(results_count.toString() + " objets trouvés");
                 }
             }
-            //AUCASE.loadImages();
         }).fail(function(e) {
             console.log("Error", e);
-        })
+        });
     },
-    //loadImages: function() {
-    //    $(".object-image").each(function (){
-    //        var objectImage = $(this);
-    //        console.log(objectImage);
-    //        var width = Math.round(objectImage.width());
-    //        var url = objectImage.data('url-prefix');
-    //        url = url + '/' + width + ',/0/default.jpg';
-    //        objectImage.replaceWith('<img src="' + url + '" class="card-img-top">');
-    //    });
-    //},
     initRequestParams: function() {
         return AUCASE.params = {
-            experts: $("#expertsdropdown").val(),
-            commissaires: $("#commissairesdropdown").val(),
+            actors: Array.from(new Set($("#expertsdropdown").val().concat($("#commissairesdropdown").val()))).map(numStr => parseInt(numStr)),
             startdate: $("#datetimepicker1").datepicker('getDate'),
             enddate: $("#datetimepicker2").datepicker('getDate'),
             objectsearch: $('input#objectsearch').val(),
-            sectionsearch: $('input#sectionsearch').val(),
+            sectionauthorsearch: $('input#sectionauthorsearch').val(),
+            sectioncategorysearch: $('input#sectioncategorysearch').val(),
             sortingorder: $('#sortorder').val(),
             page: $("#resultspages-top").pagination('getCurrentPage'),
         },
-        AUCASE.params
+        AUCASE.params;
     }
 };
 window.onload = function() {

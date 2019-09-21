@@ -7,7 +7,7 @@ def add_dash(server):
     app = dash.Dash(
         __name__,
         server=server,
-        routes_pathname_prefix='/dash/'
+        routes_pathname_prefix='/explore/'
     )
 
     from app.models import Actor, Section, Object, Sale, Actor_Sale
