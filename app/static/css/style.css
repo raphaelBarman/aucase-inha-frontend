@@ -1,8 +1,17 @@
+h1 {
+    margin-bottom: 1.5rem;
+}
+
+h2 {
+    margin-bottom: 1rem;
+}
+
 .sidebar {
   /*! padding: 10px 0 0; */
   box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
   padding: 1.5 rem;
 }
+
 .sidebar-sticky {
   position: -webkit-sicky;
   position: sticky;

@@ -1,8 +1,8 @@
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from app.dash.dashboard import add_dash
 db = SQLAlchemy()
+
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
@@ -24,8 +24,5 @@ def create_app(test_config=None):
 
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)
-
-    dash_index = add_dash(app)
-
 
     return app

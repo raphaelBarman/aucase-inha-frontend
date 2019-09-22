@@ -1,5 +1,6 @@
 import dateutil.parser as date_parse
-from app.models import Actor, Object, Sale, Section, object2iiif
+from app.models import Actor, Object, Sale, Section
+
 
 def search(actors_ids,
            object_query,
@@ -9,25 +10,14 @@ def search(actors_ids,
            end_date):
     objects = Object.query
     if len(object_query) > 0:
-        if not object_query.startswith('"') or not object_query.endswith('"'):
-            object_query += '*'
+        object_query = wildcard_query(object_query)
         objects = objects.filter(Object.text.match(object_query))
     if len(section_author_query) > 0:
-        if not section_author_query.startswith('"') or not section_author_query.endswith('"'):
-            section_author_query += '*'
-        objects = objects.filter(
-            Object.parent_section.has(
-                (Section.text.match(section_author_query) & Section._class.in_(["author", "ecole"])) |
-                (Section.parent_section.has(Section.text.match(section_author_query) & Section._class.in_(["author", "ecole"])))
-            ))
+        section_author_query = wildcard_query(section_author_query)
+        objects = filter_section_by_classes(objects, section_author_query, ['author', 'ecole'])
     if len(section_category_query) > 0:
-        if not section_category_query.startswith('"') or not section_category_query.endswith('"'):
-            section_category_query += '*'
-        objects = objects.filter(
-            Object.parent_section.has(
-                (Section.text.match(section_category_query) & Section._class.in_(["category"])) |
-                (Section.parent_section.has(Section.text.match(section_category_query) & Section._class.in_(["category"])))
-            ))
+        section_category_query = wildcard_query(section_category_query)
+        objects = filter_section_by_classes(objects, section_category_query, ['category'])
 
     if len(actors_ids) > 0:
         objects = objects.filter(
@@ -47,3 +37,23 @@ def search(actors_ids,
         except:
             pass
     return objects
+
+
+def wildcard_query(query):
+    if not query.startswith('"') or not query.endswith('"'):
+        query += '*'
+    return query
+
+
+def filter_section_by_classes(objects, query, classes):
+    return objects.filter(
+        Object.parent_section.has(
+            (Section.text.match(query) &
+             Section._class.in_(classes)) |
+            (Section.parent_section.has(
+                Section.text.match(query) &
+                Section._class.in_(classes)))
+        ))
+
+
+

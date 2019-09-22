@@ -121,7 +121,7 @@ var AUCASE = {
     search: function(e) {
         e && AUCASE.initRequestParams(),
         AUCASE.searchXhR && 4 != AUCASE.searchXhR.readystate && AUCASE.searchXhR.abort(),
-        console.log(AUCASE.params);
+        console.log(JSON.stringify(AUCASE.params));
         AUCASE.searchXhR = $.ajax({
             method: "POST",
             url: '/api?search',
