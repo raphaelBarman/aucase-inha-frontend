@@ -4,6 +4,11 @@ h1 {
 
 h2 {
     margin-bottom: 1rem;
+    margin-top: 2rem;
+}
+
+#resultspage {
+    max-width: 600px;
 }
 
 .sidebar {

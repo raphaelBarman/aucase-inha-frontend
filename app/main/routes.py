@@ -1,5 +1,4 @@
-from flask import render_template, request, abort, Response, stream_with_context
-import requests
+from flask import render_template, request, abort
 from app.main import bp
 from flask import jsonify
 from app.models import Actor, Object, Sale
@@ -16,6 +15,7 @@ def index():
 def search_page():
     return render_template('search.html', title='Aucase')
 
+
 @bp.route("/api", methods=['POST'])
 def w_api():
     if 'search' in request.args:
@@ -29,7 +29,6 @@ def w_api():
 
 
 def handle_search(request):
-    print(request.json)
     try:
         query = request.json
         actors_ids = set(query['actors'])
@@ -39,10 +38,9 @@ def handle_search(request):
         start_date = query['startdate']
         end_date = query['enddate']
         sort_order = query['sortingorder']
-        page = query['page'] if 'page' in request.json else 1;
+        page = query['page'] if 'page' in request.json else 1
     except:
         abort(500)
-        
     objects = search(actors_ids, object_query,
                      section_author_query, section_category_query,
                      start_date, end_date)

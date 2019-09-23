@@ -54,6 +54,3 @@ def filter_section_by_classes(objects, query, classes):
                 Section.text.match(query) &
                 Section._class.in_(classes)))
         ))
-
-
-
