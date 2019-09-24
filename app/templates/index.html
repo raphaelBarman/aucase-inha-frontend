@@ -3,31 +3,31 @@
     <h1 class="text-center display-4 mt-4" id="title">Auction Catalog Segmentation</h1>
     <h2 class="text-center">Description générale</h2>
     <p class="text-justify">
-        Auction Catalog Segmentation (Aucase) est un projet réalisé par Raphaël Barman à <a href="https://inha.fr">l'Institut national d'histoire de l'art (INHA)</a> lors d'un stage dans le cadre de sa maîtrise en Humanités Digitales à <a href="https://epfl.ch"> l'École polytechnique fédérale de Lausanne (EPFL)</a>.
+        <i>Auction Catalog Segmentation</i> (Aucase) ou segmentation des catalogues de vente est un projet réalisé par Raphaël Barman à <a href="https://inha.fr">l'Institut national d'histoire de l'art (INHA)</a> lors d'un stage dans le cadre de sa maîtrise en Humanités Digitales à <a href="https://epfl.ch">l'École polytechnique fédérale de Lausanne (EPFL)</a>.
     </p>
 
     <p class="text-justify">
-        L'objectif du projet était d'utiliser la numérisation des catalogues de ventes aux enchères appartenant à l'INHA afin de créer une base de données des ventes d'objets avec leurs métadonnées, ceci à travers un processus de segmentation des images par apprentissage profond.
+        L'objectif du projet était d'utiliser la numérisation des catalogues de ventes aux enchères appartenant à l'INHA afin de créer une base de données des objets vendus avec leurs métadonnées, ceci à travers un processus automatique de segmentation des images par apprentissage profond.
     </p>
     <p class="text-justify">
-        Le projet a réussi à extraire de 1911 catalogues de vente aux enchères publiés par la maison Drouot entre le 1er janvier 1939 et le 31 décembre 1945 plus de 300'000 objets réalisés par plus de 5'000 artistes mise en vente dans des enchères supervisées par plus de 200 commissaires-priseurs et experts. Le code utilisé pour l'extraction est disponible en ligne sur <a href="https://github.com/raphaelBarman/aucase-inha">Github</a>.
+        Le projet a réussi à extraire de 1911 catalogues de vente aux enchères publiés par la maison Drouot à Paris entre le 1er janvier 1939 et le 31 décembre 1945 plus de 300'000 objets réalisés par plus de 5'000 artistes. Ces objets ont été mis en vente dans des enchères supervisées par plus de 200 commissaires-priseurs et experts différents. Le code utilisé pour l'extraction est disponible en ligne sur <a href="https://github.com/raphaelBarman/aucase-inha">Github</a>.
     </p>
     <p class="text-justify">
-        Les catalogues de ventes utilisés sont ceux disponibles en ligne sur la <a href="https://bibliotheque-numerique.inha.fr/collection/?&refine[Categories][]=Imprim%C3%A9s&refine[Categories][]=Imprim%C3%A9s$$$Catalogues%20de%20vente">bibliothèque numérique de l’INHA</a>. Toutes les métadonnées liées à la date de vente ainsi qu'aux acteurs de la vente tels que les experts et les commissaires-priseurs sont extraites du catalogue de la bibliothèque numérique et n'ont pas donc pas était extraites par un procédé automatique. Le procédé automatique a uniquement extrait les sections et les objets des catalogues. Les sections ont été triées en grande partie manuellement en deux typologies: des sections décrivant des catégories d'objets ("tableaux") et des sections décrivant un artiste ou une école ("Couture"). Les objets ont été ensuite liés à leurs sections par un procédé automatique.
+        Les catalogues de ventes utilisés sont ceux disponibles en ligne sur la <a href="https://bibliotheque-numerique.inha.fr/collection/?&refine[Categories][]=Imprim%C3%A9s&refine[Categories][]=Imprim%C3%A9s$$$Catalogues%20de%20vente">bibliothèque numérique de l’INHA</a>. Toutes les métadonnées liées à la date de vente ainsi qu'aux acteurs de la vente tels que les experts et les commissaires-priseurs sont issues du catalogue de la bibliothèque numérique et n'ont pas donc pas était extraites par un procédé automatique. Le procédé automatique a uniquement extrait les sections et les objets des catalogues. Les sections ont été triées en grande partie manuellement en deux typologies: des sections décrivant des catégories d'objets ("tableaux") et des sections décrivant un artiste ou une école ("Couture"). Les objets ont été ensuite liés à leurs sections par un procédé automatique.
     </p>
 
     <h2 class="text-center">Limites de la base de donnée</h2>
     <h3 class="text-center">Limite de l'extraction</h3>
     <p class="text-justify">
-        La base de données a été alimentée par un procédé automatique d'extraction depuis les images et la reconnaisance optique de charactères. Ce procédé étant automatique, il y a inévitablement des erreurs dans la base de donnée. Ces erreurs n'ont pas été quantifiées de manière quantitative dans le cadre de ce projet, mais les résultats semblement qualitativement bons. Il n'est toutefois pas impossible que des résultats soient manquants et leur absence dans l'interface de recherche ne garanti pas qu'ils ne soient pas présents dans les catalogues mêmes. De plus il y a de nombreuses erreurs de lien entre section et objet car le procédé lie les objets à la dernière section valide.
+        La base de données a été alimentée par un procédé automatique d'extraction depuis les images et la reconnaisance optique de charactères. Ce procédé étant automatique, il y a inévitablement des erreurs dans la base de donnée. Ces erreurs n'ont pas été mesurées de manière quantitative dans le cadre de ce projet, mais les résultats semblement qualitativement bons. Il n'est toutefois pas impossible que des résultats soient manquants et leur absence dans l'interface de recherche ne garanti pas qu'ils ne soient pas présents dans les catalogues mêmes. De plus il y a de nombreuses erreurs de lien entre section et objet car le procédé lie simplement les objets à la dernière section valide, ce qui resulte parfois à des erreurs selon le catalogue.
     </p>
     <h3 class="text-center">Limite du corpus</h3>
     <p class="text-justify">
-        Le corpus lui même peut être vu comme une limite de la base de donnée. En effet, il s'arrête à des dates très fixes et pas forcément en lien avec la réalité de Paris occupée. De plus, l'exhaustivité des catalogues de ventes de la maison Drouout n'est pas garantie, il est donc possible que certaines ventes ne soient pas représentées dans la base de donnée.
+        Le corpus lui même peut être vu comme une limite de la base de donnée. En effet, la période traitée débute et s'arrête à des dates très fixes et pas forcément en lien avec la réalité de Paris occupée. De plus, l'exhaustivité des catalogues de ventes de la maison Drouout n'est pas garantie, il est donc possible que certaines ventes ne soient pas représentées dans la base de donnée.
     </p>
     <h2 class="text-center">Description de l'interface de recherche</h2>
     <p class="text-justify">
-        <a href="/search">L'interface de recherche</a> permet de trouver des objets en utilisant trois facettes. La recherche en plein texte, la période et les acteurs. La recherche n'implémente aucun charactère spécieux présent dans d'autres moteurs de recherche (- pour exclure, ? pour rendre facultatif, etc.), sauf l'utilisation des guillements (") pour faire une recherche exacte sur un terme. Les facettes de recherche sont les suivantes:
+        <a href="/search">L'interface de recherche</a> permet de trouver des objets en utilisant trois facettes. La recherche en plein texte et des filtres sur la période et sur les acteurs. La recherche n'implémente aucun charactère spécial présent dans d'autres moteurs de recherche (- pour exclure, ? pour rendre facultatif, etc.), sauf l'utilisation des guillements (") pour faire une recherche exacte sur un terme, par exemple <i>boucher</i> trouvera à la fois le peintre et le mot <i>boucherie</i> tandis que <i>"boucher"</i> ne trouvera que ce terme exact, sans préxife ou suffixe. Les facettes de recherche sont les suivantes:
         <dl class="row">
             <dt class="col-sm-3">Recherche en plein texte</dt>
             <dd class="col-sm-9">
@@ -40,7 +40,7 @@
             <dd class="col-sm-9">
                 <dl class="row">
                     <dt class="col-sm-4">Texte des auteurs/écoles</dt>
-                    <dd class="col-sm-8">Recherche dans le texte des sections de type auteurs/école ("Couture").</dd>
+                    <dd class="col-sm-8">Recherche dans le texte des sections de type auteurs/école ("Couture" ou "école française").</dd>
                 </dl>
             </dd>
             <dt class="col-sm-3"></dt>
@@ -72,7 +72,7 @@
                 </dl>
             </dd>
         </dl>
-        Il est ensuite possible de trier les résultats par pertinences par rapport à la requête ou par rapport à la date. Les informations sur chaque objet sont ensuite présentée et en cliquant dessus, on obtient la page correspondante de la bibliothèque numérique.
+        Il est ensuite possible de trier les résultats par pertinences par rapport à la requête ou par rapport à la date. Les informations sur chaque objet sont ensuite présentée en une liste paginée et en cliquant sur un objet, on obtient la page correspondante de la bibliothèque numérique.
     </p>
 </div>
 {% endblock %}
